@@ -1,0 +1,56 @@
+# 企业二开部署 overlay（纳入版本管理）：用本地源码构建镜像，覆盖官方 langgenius/*。
+#
+# 完整栈部署（沿用 -p dify 项目名，复用 docker/volumes/ 下已有数据）：
+#   cd docker && docker compose -p dify \
+#     -f docker-compose.yaml -f docker-compose.build.yaml up -d --build
+#
+# 只构建镜像不启动：
+#   cd docker && docker compose -p dify \
+#     -f docker-compose.yaml -f docker-compose.build.yaml build
+#
+# 本机 docker-compose.override.yaml（gitignore）是指向本文件的软链接，
+# 所以在 docker/ 下直接 `docker compose -p dify up -d --build` 效果相同。
+#
+# 纯开发（只起中间件，api/web 跑源码）请改用下面这条，不要和完整栈同时起，
+# 否则 5432/6379/8080/3128/5002-5003 端口会冲突：
+#   ./dev/start-docker-compose
+#
+# 若要临时用官方镜像、忽略本 overlay：
+#   cd docker && docker compose -p dify -f docker-compose.yaml up -d
+
+x-api-build: &api-build
+  context: ..
+  dockerfile: api/Dockerfile
+
+x-web-build: &web-build
+  context: ..
+  dockerfile: web/Dockerfile
+
+x-agent-build: &agent-build
+  context: ..
+  dockerfile: dify-agent/Dockerfile
+
+services:
+  api:
+    image: unionclin/dify-api:dev
+    build: *api-build
+
+  api_websocket:
+    image: unionclin/dify-api:dev
+    build: *api-build
+
+  worker:
+    image: unionclin/dify-api:dev
+    build: *api-build
+
+  worker_beat:
+    image: unionclin/dify-api:dev
+    build: *api-build
+
+  web:
+    image: unionclin/dify-web:dev
+    build: *web-build
+
+  agent_backend:
+    image: unionclin/dify-agent-backend:dev
+    build: *agent-build
