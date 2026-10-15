@@ -31,7 +31,17 @@ FROM base AS packages
 COPY dify-agent/pyproject.toml dify-agent/uv.lock dify-agent/README.md ./
 COPY dify-agent/src ./src
 # Trust the checked-in lock during image builds and install the server extra.
-RUN uv sync --frozen --no-dev --no-editable --extra server
+# UV_LOCK_FILE_MIRROR rewrites the absolute files.pythonhosted.org URLs pinned
+# in uv.lock (mirrors serve identical /packages/... paths); UV_DEFAULT_INDEX
+# covers build-system requirements that are resolved live rather than locked.
+# Both default to upstream behaviour.
+ARG UV_LOCK_FILE_MIRROR=
+ARG UV_DEFAULT_INDEX=https://pypi.org/simple
+RUN if [ -n "${UV_LOCK_FILE_MIRROR}" ]; then \
+      sed -i "s|https://files.pythonhosted.org|${UV_LOCK_FILE_MIRROR}|g" uv.lock; \
+    fi
+RUN UV_DEFAULT_INDEX="${UV_DEFAULT_INDEX}" UV_HTTP_TIMEOUT=300 \
+    uv sync --frozen --no-dev --no-editable --extra server
 
 
 # production stage

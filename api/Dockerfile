@@ -21,13 +21,36 @@ RUN apt-get update \
           # for building gmpy2
           libmpfr-dev libmpc-dev
 
+# Optional git URL rewrite for hosts that cannot reach github.com directly.
+# uv.lock pins flask-restx to a github.com revision, so `uv sync` needs git
+# access to it. Both args default to empty, keeping upstream behaviour intact.
+ARG GIT_INSTEADOF_FROM=
+ARG GIT_INSTEADOF_TO=
+RUN if [ -n "${GIT_INSTEADOF_FROM}" ] && [ -n "${GIT_INSTEADOF_TO}" ]; then \
+      git config --global url."${GIT_INSTEADOF_TO}".insteadOf "${GIT_INSTEADOF_FROM}"; \
+    fi
+
 # Install Python dependencies (workspace members under providers/vdb/)
 COPY api/pyproject.toml api/uv.lock ./
 COPY api/providers ./providers
 COPY dify-agent/pyproject.toml dify-agent/README.md /app/dify-agent/
 COPY dify-agent/src /app/dify-agent/src
 # Trust the checked-in lock during image builds; local path sources are copied from the repository context.
-RUN uv sync --frozen --no-dev --no-editable
+# Two separate mirrors are needed, both empty/default so upstream behaviour is
+# intact:
+#   UV_LOCK_FILE_MIRROR - uv.lock pins absolute files.pythonhosted.org URLs for
+#     every locked wheel/sdist, and `--frozen` downloads exactly those, so they
+#     have to be rewritten (mirrors serve identical /packages/... paths).
+#   UV_DEFAULT_INDEX - build-system requirements of sdist-only packages (e.g.
+#     numpy for chroma-hnswlib) are not in the lock and are resolved live from
+#     the index.
+ARG UV_LOCK_FILE_MIRROR=
+ARG UV_DEFAULT_INDEX=https://pypi.org/simple
+RUN if [ -n "${UV_LOCK_FILE_MIRROR}" ]; then \
+      sed -i "s|https://files.pythonhosted.org|${UV_LOCK_FILE_MIRROR}|g" uv.lock; \
+    fi
+RUN UV_DEFAULT_INDEX="${UV_DEFAULT_INDEX}" UV_HTTP_TIMEOUT=300 \
+    uv sync --frozen --no-dev --no-editable
 
 # production stage
 FROM base AS production

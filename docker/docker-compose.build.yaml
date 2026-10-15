@@ -21,6 +21,22 @@
 x-api-build: &api-build
   context: ..
   dockerfile: api/Dockerfile
+  args:
+    # api/uv.lock 把 flask-restx 锁到 github.com 的一个 revision，本机直连
+    # github.com 会 TLS 重置，所以走镜像。两个值都置空即恢复上游行为。
+    GIT_INSTEADOF_FROM: ${GIT_INSTEADOF_FROM:-https://github.com/}
+    GIT_INSTEADOF_TO: >-
+      ${GIT_INSTEADOF_TO:-https://ghfast.top/https://github.com/}
+    # uv.lock 把每个 wheel/sdist 都锁成 files.pythonhosted.org 的绝对 URL，
+    # 本机到它只有 ~40KB/s（被 SNI 限速）；南大镜像同路径 ~375KB/s，
+    # 已验证覆盖两份 lock 的全部 2120 + 1769 个 URL。
+    # UV_LOCK_FILE_MIRROR 管锁定的包；UV_DEFAULT_INDEX 管不在 lock 里、
+    # 构建 sdist 时实时解析的 build-system 依赖（如 chroma-hnswlib 的 numpy）。
+    # 置空 / 改回官方即恢复上游行为。
+    UV_LOCK_FILE_MIRROR: >-
+      ${UV_LOCK_FILE_MIRROR:-https://mirror.nju.edu.cn/pypi/web}
+    UV_DEFAULT_INDEX: >-
+      ${UV_DEFAULT_INDEX:-https://mirror.nju.edu.cn/pypi/web/simple}
 
 x-web-build: &web-build
   context: ..
@@ -29,6 +45,11 @@ x-web-build: &web-build
 x-agent-build: &agent-build
   context: ..
   dockerfile: dify-agent/Dockerfile
+  args:
+    UV_LOCK_FILE_MIRROR: >-
+      ${UV_LOCK_FILE_MIRROR:-https://mirror.nju.edu.cn/pypi/web}
+    UV_DEFAULT_INDEX: >-
+      ${UV_DEFAULT_INDEX:-https://mirror.nju.edu.cn/pypi/web/simple}
 
 services:
   api:

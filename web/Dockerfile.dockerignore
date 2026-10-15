@@ -33,3 +33,13 @@ web/*.iws
 web/*.ipr
 e2e/node_modules
 sdks/nodejs-client/node_modules
+
+# Keep last so they win over the `!packages/**/...` re-inclusions above.
+# Workspace node_modules are pnpm symlink farms pointing into the root .pnpm
+# store, which is excluded. Copying them into the image leaves dangling
+# symlinks that shadow the in-container `pnpm install` result and break
+# module resolution (e.g. `@base-ui/react/*` from packages/dify-ui).
+**/node_modules
+**/node_modules/**
+**/.pnpm-store
+**/.pnpm-store/**
