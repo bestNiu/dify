@@ -1,4 +1,5 @@
 include /etc/squid/dify_common.conf
+include /etc/squid/dify_upstream.conf
 
 acl allowed_domains dstdomain .marketplace.dify.ai
 

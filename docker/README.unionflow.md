@@ -74,6 +74,12 @@ docker compose up -d --no-build api api_websocket worker worker_beat web
 
 ## 5. 已知差异与注意事项
 
+- **出网代理**：本机无直连外网，`ssrf_proxy`(squid) 通过
+  `SSRF_PROXY_UPSTREAM_HOST` / `SSRF_PROXY_UPSTREAM_PORT` 走宿主机 sing-box
+  （`172.17.0.1:7890`）。`ssrf_proxy/docker-entrypoint.sh` 会据此生成
+  `/etc/squid/dify_upstream.conf`（`cache_peer` + `never_direct allow all`），
+  否则插件市场下载会 `TCP_TUNNEL/503` 并在 3 次重试后失败。
+
 - `local_sandbox` 官方 `1.17.1` 镜像尚未实现 `--require-auth-token` 参数，
   override 中去掉了该参数；`SHELLCTL_AUTH_TOKEN` 仍会生效。
 - `plugin_daemon` 暴露 `5003`（插件调试端口）。

@@ -22,3 +22,9 @@ services:
   # SHELLCTL_AUTH_TOKEN is provided via the service environment.
   local_sandbox:
     command: ["shellctl", "serve", "--listen", "0.0.0.0:5004"]
+  # Route ssrf_proxy (squid) outbound traffic through the host's sing-box proxy.
+  # Required on hosts that have no direct internet egress (only 127.0.0.1:7890).
+  ssrf_proxy:
+    environment:
+      SSRF_PROXY_UPSTREAM_HOST: ${SSRF_PROXY_UPSTREAM_HOST:-}
+      SSRF_PROXY_UPSTREAM_PORT: ${SSRF_PROXY_UPSTREAM_PORT:-}
