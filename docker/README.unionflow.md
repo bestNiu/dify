@@ -65,7 +65,7 @@ docker compose up -d --no-build api api_websocket worker worker_beat web
 
 ## 4. 访问与初始化
 
-- 控制台：`http://<host>/`（Nginx 监听 80/443，可在 `.env` 中改 `EXPOSE_NGINX_PORT`）
+- 控制台：`http://<host>:9099/`（Nginx 容器内仍监听 80/443，宿主机映射由 `.env` 的 `EXPOSE_NGINX_PORT` 控制）
 - 首次初始化：
   - 使用 `INIT_PASSWORD` 通过初始化校验；
   - 设置管理员邮箱/密码；
