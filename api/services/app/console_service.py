@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from contextlib import AbstractContextManager, closing
 from dataclasses import replace
+from io import BytesIO
 from typing import BinaryIO, Literal, Protocol
 from uuid import UUID, uuid4
 
@@ -447,8 +448,14 @@ class ConsoleAppService:
         # Validate ownership before producing external effects, including feature rejection.
         app = self._apps.get_reference(context, app_id)
         self._creators.require_enabled()
-        with self._export_package(context, app, AppExportOptions(format="ifpkg", include_secret=False)) as package:
-            claim_code = self._creators.upload(package.archive, filename=package.filename)
+        if app.mode == "agent":
+            with self._export_package(context, app, AppExportOptions(include_secret=False)) as package:
+                claim_code = self._creators.upload(package.archive, filename=package.filename)
+        else:
+            # Creators Platform decodes only the YAML DSL: the ifpkg archive is rejected with HTTP 500.
+            dsl = self._transfers.export_dsl(context, app_id, AppExportOptions(format="yaml", include_secret=False))
+            with closing(BytesIO(dsl.encode("utf-8"))) as stream:
+                claim_code = self._creators.upload(stream, filename=f"{app_id}.yml")
         code = self._creators.authorize(context.account_id)
         return self._creators.redirect_url(claim_code, code)
 

@@ -407,8 +407,8 @@ def test_publish_orders_package_upload_authorization_and_redirect_without_secret
         assert transfers.calls == [("agent", "workspace", "agent", None)]
         filename, payload = "agent.ifpkg", b"agent"
     else:
-        assert transfers.calls == [("package", CONTEXT, "app", AppExportOptions(format="ifpkg", include_secret=False))]
-        filename, payload = "example.ifpkg", b"package"
+        assert transfers.calls == [("dsl", CONTEXT, "app", AppExportOptions(format="yaml", include_secret=False))]
+        filename, payload = "app.yml", b"app: example"
     assert creators.calls == [("upload", filename, payload), ("authorize", "actor"), ("redirect", "claim", "code")]
     assert len(creators.uploads) == 1
     assert creators.uploads[0].closed
@@ -422,7 +422,7 @@ def test_publish_closes_package_and_stops_after_failure(ports: Ports, failure: L
     with pytest.raises(RuntimeError, match="failed"):
         service.publish(CONTEXT, "app")
     assert creators.uploads[0].closed
-    expected: list[tuple[object, ...]] = [("upload", "example.ifpkg", b"package")]
+    expected: list[tuple[object, ...]] = [("upload", "app.yml", b"app: example")]
     if failure == "authorize":
         expected.append(("authorize", "actor"))
     assert creators.calls == expected
