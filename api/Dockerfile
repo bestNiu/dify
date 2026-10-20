@@ -97,6 +97,11 @@ ENV VIRTUAL_ENV=/app/api/.venv
 COPY --from=packages --chown=dify:dify ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
+# Optional: allow NLTK to download corpora through a trusted build-time proxy
+# (NLTK blocks proxied fetches for SSRF safety unless explicitly opted in).
+ARG NLTK_ALLOW_PROXIED_URLOPEN=
+ENV NLTK_ALLOW_PROXIED_URLOPEN=$NLTK_ALLOW_PROXIED_URLOPEN
+
 RUN mkdir -p /usr/local/share/nltk_data \
     && NLTK_DATA=/usr/local/share/nltk_data python -m nltk.downloader punkt_tab averaged_perceptron_tagger_eng stopwords \
     && NLTK_DATA=/usr/local/share/nltk_data python -c "import nltk; nltk.data.find('tokenizers/punkt_tab'); nltk.data.find('taggers/averaged_perceptron_tagger_eng'); nltk.data.find('corpora/stopwords')" \

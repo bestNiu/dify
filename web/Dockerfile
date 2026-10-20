@@ -10,6 +10,9 @@ LABEL maintainer="takatost@gmail.com"
 # RUN npm config set registry https://registry.npmmirror.com
 
 RUN apk add --no-cache tzdata
+# Optional: let Node/Corepack/pnpm honor HTTP(S)_PROXY during image builds (Node >= 24).
+ARG NODE_USE_ENV_PROXY=
+ENV NODE_USE_ENV_PROXY=$NODE_USE_ENV_PROXY
 RUN corepack enable
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"

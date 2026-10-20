@@ -1,0 +1,24 @@
+# Local secondary-development (二开) override.
+# Builds API/Web images from this repository instead of pulling upstream releases.
+services:
+  api:
+    image: dify-api:1.17.1-custom
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
+  api_websocket:
+    image: dify-api:1.17.1-custom
+  worker:
+    image: dify-api:1.17.1-custom
+  worker_beat:
+    image: dify-api:1.17.1-custom
+  web:
+    image: dify-web:1.17.1-custom
+    build:
+      context: ..
+      dockerfile: web/Dockerfile
+  # Upstream compose pins --require-auth-token, which the published 1.17.1
+  # shellctl image does not implement yet. Token auth still applies because
+  # SHELLCTL_AUTH_TOKEN is provided via the service environment.
+  local_sandbox:
+    command: ["shellctl", "serve", "--listen", "0.0.0.0:5004"]
