@@ -19,7 +19,7 @@ const Install = () => {
         <InstallForm />
         {!systemFeatures.branding.enabled && (
           <div className="mt-auto px-8 py-6 text-sm font-normal text-text-tertiary">
-            © {new Date().getFullYear()} LangGenius, Inc. All rights reserved.
+            © {new Date().getFullYear()} UnionFlow. All rights reserved.
           </div>
         )}
       </div>

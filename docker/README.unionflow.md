@@ -86,3 +86,30 @@ docker compose up -d --no-build api api_websocket worker worker_beat web
 - 数据卷位于 `docker/volumes/`，升级/迁移前请备份。
 - `docker-compose.yaml` 由 `generate_docker_compose` 生成，请勿直接修改；
   二开定制写入 `docker-compose.override.yaml`。
+## 6. 品牌资源（UnionFlow 一期）
+
+前端 logo / favicon 全部由品牌源图生成，源图放在仓库根的 `images/new/`：
+
+```bash
+# 重新生成（宿主机无 Pillow，用 dify-api 镜像跑，自带 Pillow 12）
+docker run --rm --user "$(id -u):$(id -g)" --entrypoint /bin/bash \
+  -v "$PWD":/repo -v /usr/share/fonts/truetype/dejavu:/fonts:ro \
+  -w /repo dify-api:1.17.1-custom \
+  -c "python3 scripts/brand/generate_brand_assets.py"
+```
+
+产物：`web/public/logo/` 下 7 个文件（横版 lockup 浅/深、嵌入对话头像与头部 1x/2x/3x、
+`logo.svg`）+ `web/public/favicon.ico`（16/32/48/64/128）。
+
+约定与已知限制：
+
+- 源图是 **1254×1254 栅格**，`logo.svg` 是"内嵌 base64 PNG 的 SVG"外壳，
+  **待补矢量源**；拿到 SVG/AI 源文件后把该文件替换成真正的 path 即可，无需改组件。
+- 横版 lockup 宽高比约 **3.86:1**（图形 168px + "UnionFlow" 文字），所以
+  `dify-logo.tsx` 的尺寸变体改用 `h-* w-auto`，别的页面传 `w-*` 固定宽会导致留白。
+- 深色模式沿用组件里的 `brightness-0 invert` 滤镜（与官方行为一致）；
+  若想深色下保留图形细节，可改用 `web/public/logo/logo-site-dark.png`。
+- 关掉的对外依赖：`CHECK_UPDATE_URL` 置空、`DISABLE_TELEMETRY=true`、
+  `DO_NOT_TRACK=true`，因此不再请求 `updates.dify.ai` 与 `otel.dify.ai`。
+- 内部标识符（`LangGeniusVersionInfo` 等类型名、市场插件 `org: 'LangGenius'` 测试数据）
+  按协议/数据范畴保留，未随品牌替换。

@@ -9,9 +9,9 @@ const difyLogoVariants = cva(
   {
     variants: {
       size: {
-        small: 'h-4 w-9',
-        medium: 'h-5.5 w-12',
-        large: 'h-7 w-16',
+        small: 'h-4 w-auto',
+        medium: 'h-5.5 w-auto',
+        large: 'h-7 w-auto',
       },
     },
     defaultVariants: {
@@ -35,8 +35,8 @@ export function DifyLogo({ alt, className, size, ...props }: DifyLogoProps) {
     <img
       {...props}
       src={`${basePath}/logo/logo.svg`}
-      width={48}
-      height={22}
+      width={324}
+      height={84}
       className={classes}
       alt={alt}
     />

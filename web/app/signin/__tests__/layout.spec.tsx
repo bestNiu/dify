@@ -14,7 +14,7 @@ describe('SignInLayout landmarks', () => {
     const main = screen.getByRole('main')
     expect(within(main).getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
     expect(screen.getByRole('banner')).not.toContainElement(main)
-    expect(screen.getByRole('contentinfo')).toHaveTextContent('LangGenius')
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('UnionFlow')
     expect(main).not.toContainElement(screen.getByRole('banner'))
     expect(main).not.toContainElement(screen.getByRole('contentinfo'))
   })

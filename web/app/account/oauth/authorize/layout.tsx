@@ -24,7 +24,7 @@ export default function OAuthAuthorizeLayout({ children }: Props) {
         </div>
         {systemFeatures.branding.enabled === false && (
           <div className="px-8 py-6 system-xs-regular text-text-tertiary">
-            © {copyrightYear} LangGenius, Inc. All rights reserved.
+            © {copyrightYear} UnionFlow. All rights reserved.
           </div>
         )}
       </div>

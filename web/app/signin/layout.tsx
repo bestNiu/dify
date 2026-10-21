@@ -22,7 +22,7 @@ export default function SignInLayout({ children }: { children: React.ReactNode }
           </main>
           {systemFeatures.branding.enabled === false && (
             <footer className="px-8 py-6 system-xs-regular text-text-tertiary">
-              © {new Date().getFullYear()} LangGenius, Inc. All rights reserved.
+              © {new Date().getFullYear()} UnionFlow. All rights reserved.
             </footer>
           )}
         </div>

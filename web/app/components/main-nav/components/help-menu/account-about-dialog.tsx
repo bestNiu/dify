@@ -43,17 +43,17 @@ export default function AccountAboutDialog({
           <DialogHeaderCloseButton aria-label={t(($) => $['operation.close'], { ns: 'common' })} />
         </DialogHeader>
         <DialogBody className="flex flex-col items-center gap-4">
-          <DifyLogo alt="Dify" size="large" className="mx-auto" />
+          <DifyLogo alt="UnionFlow" size="large" className="mx-auto" />
 
           <div className="text-center system-xs-regular text-text-tertiary">
             Version {langGeniusVersionInfo.current_version}
           </div>
           <div className="flex flex-col items-center gap-2 text-center system-xs-regular text-text-secondary">
-            <div>©{dayjs().year()} LangGenius, Inc., Contributors.</div>
+            <div>©{dayjs().year()} UnionFlow, Contributors.</div>
             <div className="text-text-accent">
               {isNonCloudEdition && (
                 <Link
-                  href="https://github.com/langgenius/dify/blob/main/LICENSE"
+                  href="https://github.com/bestNiu/dify/blob/custom/unionflow/LICENSE"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-sm focus-visible:ring-2 focus-visible:ring-state-accent-solid focus-visible:outline-hidden"
@@ -64,7 +64,7 @@ export default function AccountAboutDialog({
               {deploymentEdition === 'CLOUD' && (
                 <>
                   <Link
-                    href="https://dify.ai/privacy"
+                    href="https://union-laboratory.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-sm focus-visible:ring-2 focus-visible:ring-state-accent-solid focus-visible:outline-hidden"
@@ -73,7 +73,7 @@ export default function AccountAboutDialog({
                   </Link>
                   ,&nbsp;
                   <Link
-                    href="https://dify.ai/terms"
+                    href="https://union-laboratory.com/terms"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-sm focus-visible:ring-2 focus-visible:ring-state-accent-solid focus-visible:outline-hidden"
@@ -98,7 +98,7 @@ export default function AccountAboutDialog({
                 })}
           </div>
           <Link
-            href="https://github.com/langgenius/dify/releases"
+            href="https://github.com/bestNiu/dify/releases"
             target="_blank"
             rel="noopener noreferrer"
             className={buttonVariants({ size: 'small' })}

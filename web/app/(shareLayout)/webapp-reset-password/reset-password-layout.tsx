@@ -26,7 +26,7 @@ export default function ResetPasswordLayout({ children }: { children: React.Reac
         </div>
         {!systemFeatures.branding.enabled && (
           <div className="px-8 py-6 system-xs-regular text-text-tertiary">
-            © {new Date().getFullYear()} LangGenius, Inc. All rights reserved.
+            © {new Date().getFullYear()} UnionFlow. All rights reserved.
           </div>
         )}
       </div>

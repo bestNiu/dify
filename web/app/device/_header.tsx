@@ -27,7 +27,7 @@ const Header = () => {
           alt="logo"
         />
       ) : (
-        <DifyLogo alt="Dify" size="large" />
+        <DifyLogo alt="UnionFlow" size="large" />
       )}
       <div className="flex items-center gap-1">
         <LocaleMenu
