@@ -8,8 +8,11 @@
 **/*.pyc
 **/.mypy_cache
 **/.ruff_cache
+# 本地 docker compose 的运行时数据卷（含 root 权限的数据库文件，且绝不应进构建上下文）
+docker/volumes
 .git
 .github
 *.md
 !web/README.md
 !api/README.md
+**/node_modules
